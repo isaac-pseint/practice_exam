@@ -1,0 +1,88 @@
+### ===========================================================================
+### ARCHIVO DE PRUEBAS HTTP: api.http
+### EXTENSIÓN COMPATIBLE: REST Client (Huachao Mao) o Thunder Client en VS Code
+### ===========================================================================
+
+@baseUrl = http://localhost:4100/api
+
+### 1. LISTAR TODOS LOS USUARIOS (GET)
+# Esperado: 200 OK con el listado de usuarios ordenados por apellidos
+GET {{baseUrl}}/usuarios
+Accept: application/json
+
+### 2. BUSCAR USUARIO POR ID EXISTENTE (GET)
+# Esperado: 200 OK con el objeto del usuario
+GET {{baseUrl}}/usuarios/1
+Accept: application/json
+
+### 3. BUSCAR USUARIO POR ID INEXISTENTE (GET)
+# Esperado: 404 Not Found con mensaje de error
+GET {{baseUrl}}/usuarios/9999
+Accept: application/json
+
+### 4. CREAR NUEVO USUARIO (POST)
+# Esperado: 201 Created con el id_generado y datos de inserción
+POST {{baseUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Mariana",
+  "apellidos": "Torres Duque",
+  "email": "mariana.torres@example.com",
+  "telefono": "+573154445566",
+  "ciudad": "Bucaramanga",
+  "estado": "activo",
+  "password": "PasswordSeguro2026*"
+}
+
+### 5. INTENTAR CREAR CON EMAIL DUPLICADO (POST)
+# Esperado: 400 Bad Request ("El email ya está registrado")
+POST {{baseUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Duplicado",
+  "apellidos": "Test",
+  "email": "mariana.torres@example.com",
+  "telefono": "+573000000000",
+  "ciudad": "Cali",
+  "estado": "activo",
+  "password": "CualquierPassword123*"
+}
+
+### 6. INTENTAR CREAR SIN CAMPOS OBLIGATORIOS (POST)
+# Esperado: 400 Bad Request
+POST {{baseUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Incompleto"
+}
+
+### 7. ACTUALIZAR CAMPOS DE UN USUARIO EXISTENTE (PUT)
+# Esperado: 200 OK con mensaje de éxito y filasAfectadas: 1
+PUT {{baseUrl}}/usuarios/1
+Content-Type: application/json
+
+{
+  "telefono": "+573109998877",
+  "ciudad": "Cartagena"
+}
+
+### 8. ACTUALIZAR USUARIO INEXISTENTE (PUT)
+# Esperado: 404 Not Found
+PUT {{baseUrl}}/usuarios/9999
+Content-Type: application/json
+
+{
+  "ciudad": "Barranquilla"
+}
+
+### 9. ELIMINAR UN USUARIO POR ID (DELETE)
+# Esperado: 200 OK con mensaje de eliminación y filasAfectadas: 1
+DELETE {{baseUrl}}/usuarios/2
+
+### 10. ELIMINAR USUARIO INEXISTENTE (DELETE)
+# Esperado: 404 Not Found
+DELETE {{baseUrl}}/usuarios/9999
+
